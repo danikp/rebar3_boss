@@ -1,0 +1,15 @@
+{application, rebar3_boss,
+ [{description, "A rebar3 plugin for compiling ChicagoBoss projects."},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, ["ChicagoBoss team"]},
+  {licenses, ["MIT"]},
+  {links, [{"GitHub", "https://github.com/danikp/rebar3_boss"}]}
+ ]}.
