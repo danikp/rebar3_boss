@@ -4,11 +4,6 @@
 
 -spec init(rebar_state:t()) -> {ok, rebar_state:t()}.
 init(State) ->
-    {ok, State1} = rebar3_boss_prv:init(State),
-    {ok, State1}.
-
-
-init(State) ->
     inets:start(httpc, [{profile, hex}]),
     rebar3_hex_http:maybe_setup_proxy(),
     lists:foldl(fun provider_init/2, {ok, State}, [rebar3_boss_compile
