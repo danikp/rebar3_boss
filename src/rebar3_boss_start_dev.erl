@@ -42,9 +42,9 @@ do(State) ->
                    [AppInfo]
            end,
     [begin
-        OutDir = rebar_app_info:ebin_dir(AppInfo),
+        OutDir = rebar_app_info:ebin_dir(AppInfo2),
         rebar_api:info("ebin dir app info ~p ~n", [OutDir])
-     end || AppInfo <- Apps],
+     end || AppInfo2 <- Apps],
 
   % AppName    = app_name(AppFile),
   % NameArg    = vm_name_arg(BossConf, AppFile),
@@ -66,3 +66,8 @@ format_error(Reason) ->
 %% Internal
 %% ===================================================================
 
+erl_command() ->
+    case os:type() of
+        {win32, _} -> "werl";
+        _ -> "exec erl"
+    end.
