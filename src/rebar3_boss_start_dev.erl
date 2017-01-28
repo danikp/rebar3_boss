@@ -31,16 +31,30 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-  rebar_api:info("Generating dynamic start-dev command~n", []),
+    rebar_api:info("Generating dynamic start-dev command~n", []),
+    AppInfo = rebar_state:current_app(State),
+    rebar_api:info("app info ~p ~n", [AppInfo]),
+
+    Apps = case rebar_state:current_app(State) of
+               undefined ->
+                   rebar_state:project_apps(State);
+               AppInfo ->
+                   [AppInfo]
+           end,
+    [begin
+        OutDir = rebar_app_info:ebin_dir(AppInfo),
+        rebar_api:info("ebin dir app info ~p ~n", [OutDir])
+     end || AppInfo <- Apps],
 
   % AppName    = app_name(AppFile),
   % NameArg    = vm_name_arg(BossConf, AppFile),
-  % ErlCmd    = erl_command(),
-  % EbinDirs    = all_ebin_dirs(BossConf, AppFile),
+  ErlCmd    = erl_command(),
+  %EbinDirs    = all_ebin_dirs(BossConf, AppFile),
+        OutDir = rebar_app_info:ebin_dir(AppInfo),
   % CookieOpt    = cookie_option(BossConf),
   % VmArgs    = vm_args(BossConf),
-   io:format("~s -pa ~s -boss developing_app ~s -boot start_sasl -config boss ~s -s reloader -s lager -s boss ~s~s~n",
-     [ErlCmd, string:join(EbinDirs, " -pa "), AppName, CookieOpt, NameArg, VmArgs]),
+  % io:format("~s -pa ~s -boss developing_app ~s -boot start_sasl -config boss ~s -s reloader -s lager -s boss ~s~s~n",
+  %   [ErlCmd, string:join(EbinDirs, " -pa "), AppName, CookieOpt, NameArg, VmArgs]),
     {ok, State}.
 
 
