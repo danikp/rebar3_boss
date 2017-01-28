@@ -1,5 +1,5 @@
 {application, rebar3_boss,
- [{description, "A rebar3 plugin for compiling ChicagoBoss projects."},
+ [{description, "A rebar3 plugin for working with ChicagoBoss projects."},
   {vsn, "0.0.1"},
   {registered, []},
   {applications,
