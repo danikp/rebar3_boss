@@ -33,14 +33,14 @@ init(State) ->
 do(State) ->
   rebar_api:info("Generating dynamic start-dev command~n", []),
 
-  AppName    = app_name(AppFile),
-  NameArg    = vm_name_arg(BossConf, AppFile),
-  ErlCmd    = erl_command(),
-  EbinDirs    = all_ebin_dirs(BossConf, AppFile),
-  CookieOpt    = cookie_option(BossConf),
-  VmArgs    = vm_args(BossConf),
-  io:format("~s -pa ~s -boss developing_app ~s -boot start_sasl -config boss ~s -s reloader -s lager -s boss ~s~s~n",
-    [ErlCmd, string:join(EbinDirs, " -pa "), AppName, CookieOpt, NameArg, VmArgs]),
+  % AppName    = app_name(AppFile),
+  % NameArg    = vm_name_arg(BossConf, AppFile),
+  % ErlCmd    = erl_command(),
+  % EbinDirs    = all_ebin_dirs(BossConf, AppFile),
+  % CookieOpt    = cookie_option(BossConf),
+  % VmArgs    = vm_args(BossConf),
+  % io:format("~s -pa ~s -boss developing_app ~s -boot start_sasl -config boss ~s -s reloader -s lager -s boss ~s~s~n",
+  %   [ErlCmd, string:join(EbinDirs, " -pa "), AppName, CookieOpt, NameArg, VmArgs]),
     {ok, State}.
 
 
@@ -52,44 +52,3 @@ format_error(Reason) ->
 %% Internal
 %% ===================================================================
 
-
-option(Opt, BossDbOpts) ->
-    proplists:get_value(Opt, BossDbOpts, option_default(Opt)).
-
-
-option_default(model_dir) -> "src/controller";
-option_default(out_dir)  -> "ebin";
-option_default(source_ext) -> ".erl";
-option_default(recursive) -> false;
-option_default(compiler_options) -> [verbose, return_errors].
-
-
-compiler_options(ErlOpts, BossDbOpts) ->
-    set_debug_info_option(proplists:get_value(debug_info, ErlOpts), option(compiler_options, BossDbOpts)).
-
-
-set_debug_info_option(true, BossCompilerOptions) ->
-    [debug_info | BossCompilerOptions];
-set_debug_info_option(undefined, BossCompilerOptions) ->
-    BossCompilerOptions.
-
-
-compile_model(Source, Target, BossDbOpts, RebarConfig) ->
-    ErlOpts = proplists:unfold(rebar_opts:get(RebarConfig, erl_opts, [])),
-
-    RecordCompilerOpts = [
-        {out_dir, filename:dirname(Target)},
-        {compiler_options, compiler_options(ErlOpts, BossDbOpts)}
-    ],
-
-    rebar_api:debug("Compiling boss controller \"~s\" -> \"~s\" with options:~n    ~s",
-                    [Source, Target, io_lib:format("~p", [BossDbOpts])]),
-
-    case boss_record_compiler:compile(Source, RecordCompilerOpts) of
-        {ok, _Mod} ->
-            ok;
-        {ok, _Mod, Ws} ->
-            rebar_base_compiler:ok_tuple(Source, Ws);
-        {error, Es, Ws} ->
-            rebar_base_compiler:error_tuple(Source, Es, Ws, RecordCompilerOpts)
-    end.
