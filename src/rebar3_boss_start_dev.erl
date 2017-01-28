@@ -23,42 +23,24 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 CB start_dev"}, % How to use the plugin
         {opts, []},                   % list of options understood by the plugin
-        {short_desc, "Compile ChicagoBoss projects."},
-        {desc, "Compile ChicagoBoss projects."}
+        {short_desc, "Start ChicagoBoss project in development mode."},
+        {desc, "Start ChicagoBoss project in development mode."}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.
 
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-    rebar_api:info("Running boss...", []),
-    Apps = case rebar_state:current_app(State) of
-               undefined ->
-                   rebar_state:project_apps(State);
-               AppInfo ->
-                   [AppInfo]
-           end,
-    [begin
-        Opts = rebar_app_info:opts(AppInfo),
-        OutDir = rebar_app_info:ebin_dir(AppInfo),
+  rebar_api:info("Generating dynamic start-dev command~n", []),
 
-        filelib:ensure_dir(filename:join(OutDir, "dummy.beam")),
-
-        BossDbOpts = proplists:unfold(rebar_opts:get(Opts, boss_db_opts, [])),
-
-        SourceDir = option(model_dir, BossDbOpts),
-        SourceExt = option(source_ext, BossDbOpts),
-        TargetExt = ".beam",
-        rebar_base_compiler:run(Opts, [],
-            SourceDir,
-            SourceExt,
-            OutDir,
-            TargetExt,
-            fun(S, T, _C) ->
-                compile_model(S, T, BossDbOpts, Opts)
-            end,
-            [{check_last_mod, true}, {recursive, option(recursive, BossDbOpts)}])
-     end || AppInfo <- Apps],
+  AppName    = app_name(AppFile),
+  NameArg    = vm_name_arg(BossConf, AppFile),
+  ErlCmd    = erl_command(),
+  EbinDirs    = all_ebin_dirs(BossConf, AppFile),
+  CookieOpt    = cookie_option(BossConf),
+  VmArgs    = vm_args(BossConf),
+  io:format("~s -pa ~s -boss developing_app ~s -boot start_sasl -config boss ~s -s reloader -s lager -s boss ~s~s~n",
+    [ErlCmd, string:join(EbinDirs, " -pa "), AppName, CookieOpt, NameArg, VmArgs]),
     {ok, State}.
 
 

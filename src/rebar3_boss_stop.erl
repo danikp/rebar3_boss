@@ -23,8 +23,8 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 CB stop"}, % How to use the plugin
         {opts, []},                   % list of options understood by the plugin
-        {short_desc, "Compile ChicagoBoss projects."},
-        {desc, "Compile ChicagoBoss projects."}
+        {short_desc, "Stop ChicagoBoss app."},
+        {desc, "Stop ChicagoBoss app."}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.
 
