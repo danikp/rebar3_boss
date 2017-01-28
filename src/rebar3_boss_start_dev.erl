@@ -41,6 +41,7 @@ do(State) ->
                AppInfo ->
                    [AppInfo]
            end,
+    rebar_api:info("apps ~p ~n", [Apps]),
     [begin
         OutDir = rebar_app_info:ebin_dir(AppInfo),
         rebar_api:info("ebin dir app info ~p ~n", [OutDir])
