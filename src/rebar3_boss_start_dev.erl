@@ -33,6 +33,7 @@ init(State) ->
 do(State) ->
     rebar_api:info("Generating dynamic start-dev command~n", []),
     AppInfo = rebar_state:current_app(State),
+    rebar_api:info("state info ~p ~n", [State]),
     rebar_api:info("app info ~p ~n", [AppInfo]),
 
     Apps = case rebar_state:current_app(State) of
