@@ -42,9 +42,9 @@ do(State) ->
                    [AppInfo]
            end,
     [begin
-        OutDir = rebar_app_info:ebin_dir(AppInfo2),
+        OutDir = rebar_app_info:ebin_dir(AppInfo),
         rebar_api:info("ebin dir app info ~p ~n", [OutDir])
-     end || AppInfo2 <- Apps],
+     end || AppInfo <- Apps],
 
   % AppName    = app_name(AppFile),
   % NameArg    = vm_name_arg(BossConf, AppFile),
