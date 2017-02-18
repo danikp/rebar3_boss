@@ -44,10 +44,10 @@ do(State) ->
 
         filelib:ensure_dir(filename:join(OutDir, "dummy.beam")),
 
-        BossDbOpts = proplists:unfold(rebar_opts:get(Opts, boss_db_opts, [])),
+        BossOpts = proplists:unfold(rebar_opts:get(Opts, boss_db_opts, [])),
 
-        SourceDir = option(model_dir, BossDbOpts),
-        SourceExt = option(source_ext, BossDbOpts),
+        SourceDir = option(model_dir, BossOpts),
+        SourceExt = option(source_ext, BossOpts),
         TargetExt = ".beam",
         rebar_base_compiler:run(Opts, [],
             SourceDir,
@@ -55,9 +55,9 @@ do(State) ->
             OutDir,
             TargetExt,
             fun(S, T, _C) ->
-                compile_model(S, T, BossDbOpts, Opts)
+                compile_model(S, T, BossOpts, Opts)
             end,
-            [{check_last_mod, true}, {recursive, option(recursive, BossDbOpts)}])
+            [{check_last_mod, true}, {recursive, option(recursive, BossOpts)}])
      end || AppInfo <- Apps],
     {ok, State}.
 
@@ -71,8 +71,8 @@ format_error(Reason) ->
 %% ===================================================================
 
 
-option(Opt, BossDbOpts) ->
-    proplists:get_value(Opt, BossDbOpts, option_default(Opt)).
+option(Opt, BossOpts) ->
+    proplists:get_value(Opt, BossOpts, option_default(Opt)).
 
 
 option_default(model_dir) -> "src/controller";
@@ -82,8 +82,8 @@ option_default(recursive) -> false;
 option_default(compiler_options) -> [verbose, return_errors].
 
 
-compiler_options(ErlOpts, BossDbOpts) ->
-    set_debug_info_option(proplists:get_value(debug_info, ErlOpts), option(compiler_options, BossDbOpts)).
+compiler_options(ErlOpts, BossOpts) ->
+    set_debug_info_option(proplists:get_value(debug_info, ErlOpts), option(compiler_options, BossOpts)).
 
 
 set_debug_info_option(true, BossCompilerOptions) ->
@@ -92,22 +92,22 @@ set_debug_info_option(undefined, BossCompilerOptions) ->
     BossCompilerOptions.
 
 
-compile_model(Source, Target, BossDbOpts, RebarConfig) ->
+compile_model(Source, Target, BossOpts, RebarConfig) ->
     ErlOpts = proplists:unfold(rebar_opts:get(RebarConfig, erl_opts, [])),
 
-    RecordCompilerOpts = [
+    ControllerCompilerOpts = [
         {out_dir, filename:dirname(Target)},
-        {compiler_options, compiler_options(ErlOpts, BossDbOpts)}
+        {compiler_options, compiler_options(ErlOpts, BossOpts)}
     ],
 
     rebar_api:debug("Compiling boss controller \"~s\" -> \"~s\" with options:~n    ~s",
-                    [Source, Target, io_lib:format("~p", [BossDbOpts])]),
+                    [Source, Target, io_lib:format("~p", [BossOpts])]),
 
-    case boss_record_compiler:compile(Source, RecordCompilerOpts) of
+    case boss_controller_compiler:compile(Source, ControllerCompilerOpts) of
         {ok, _Mod} ->
             ok;
         {ok, _Mod, Ws} ->
             rebar_base_compiler:ok_tuple(Source, Ws);
         {error, Es, Ws} ->
-            rebar_base_compiler:error_tuple(Source, Es, Ws, RecordCompilerOpts)
+            rebar_base_compiler:error_tuple(Source, Es, Ws, ControllerCompilerOpts)
     end.
