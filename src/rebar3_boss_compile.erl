@@ -44,9 +44,9 @@ do(State) ->
 
         filelib:ensure_dir(filename:join(OutDir, "dummy.beam")),
 
-        BossOpts = proplists:unfold(rebar_opts:get(Opts, boss_db_opts, [])),
+        BossOpts = proplists:unfold(rebar_opts:get(Opts, boss_opts, [])),
 
-        SourceDir = option(model_dir, BossOpts),
+        SourceDir = option(source_dir, BossOpts),
         SourceExt = option(source_ext, BossOpts),
         TargetExt = ".beam",
         rebar_base_compiler:run(Opts, [],
@@ -75,7 +75,7 @@ option(Opt, BossOpts) ->
     proplists:get_value(Opt, BossOpts, option_default(Opt)).
 
 
-option_default(model_dir) -> "src/controller";
+option_default(source_dir) -> "src/controller";
 option_default(out_dir)  -> "ebin";
 option_default(source_ext) -> ".erl";
 option_default(recursive) -> false;
