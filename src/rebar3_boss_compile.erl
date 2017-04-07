@@ -78,7 +78,7 @@ option(Opt, BossOpts) ->
 option_default(source_dir) -> "src/controller";
 option_default(out_dir)  -> "ebin";
 option_default(source_ext) -> ".erl";
-option_default(recursive) -> false;
+option_default(recursive) -> true;
 option_default(compiler_options) -> [verbose, return_errors].
 
 
