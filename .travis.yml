@@ -1,0 +1,11 @@
+language: erlang
+sudo: false
+otp_release:
+# Test on latest minor of all supported releases
+   - 20.3
+   - 19.3
+   - 18.3
+   - 17.5
+
+notifications:
+  email: false
