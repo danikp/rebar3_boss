@@ -40,13 +40,14 @@ do(State) ->
            end,
     [begin
         Opts = rebar_app_info:opts(AppInfo),
+        Dir = rebar_app_info:dir(AppInfo),
         OutDir = rebar_app_info:ebin_dir(AppInfo),
 
         filelib:ensure_dir(filename:join(OutDir, "dummy.beam")),
 
         BossOpts = proplists:unfold(rebar_opts:get(Opts, boss_opts, [])),
 
-        SourceDir = option(source_dir, BossOpts),
+        SourceDir = filename:join(Dir, option(source_dir, BossOpts)),
         SourceExt = option(source_ext, BossOpts),
         TargetExt = ".beam",
         rebar_base_compiler:run(Opts, [],
